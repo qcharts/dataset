@@ -1,2 +1,4 @@
-class dataset {}
-export { dataset }
+class Dataset {
+  constructor(attr) {}
+}
+export default Dataset
