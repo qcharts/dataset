@@ -1,4 +1,2 @@
-class Dataset {
-  constructor(attr) {}
-}
+import Dataset from './Dataset'
 export default Dataset
