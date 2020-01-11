@@ -1,38 +1,57 @@
 import Cell from './Cell'
-import filterClone from 'filter-clone'
+//import filterClone from 'filter-clone'
 import state from './state'
 class Dataset {
   constructor(data, option) {
     this.data = data
     this.option = option
     this.__deps = []
-    this.__cols = []
     this.__rows = []
-    let cellData = filterClone(data)
-    cellData.forEach(item => {
-      item.__cell = new Cell(item)
+    this.data.forEach(item => {
+      if (!item.__cell) {
+        //select 场景使用
+        item.__cell = new Cell(item)
+      }
     })
-    this.__rows = getArrData(cellData, option.row, Row)
-    this.__cols = getArrData(cellData, option.col, Col)
+    this.__rows = getArrData(this.data, option.row, Row, option.col)
   }
   get cols() {
-    return this.__cols
+    let cols = []
+    let colLen = 0
+    this.__rows.forEach(row => {
+      if (row.length > colLen) {
+        colLen = row.length
+      }
+    })
+    for (let i = 0; i < colLen; i++) {
+      let arr = []
+      this.__rows.forEach(item => {
+        arr.push(item[i])
+      })
+      cols.push(arr)
+    }
+    return cols
   }
   get rows() {
     return this.__rows
+  }
+  selectRows(name) {
+    let rowKey = this.option.row
+    let arr = this.data.filter(item => name.indexOf(item[rowKey]) !== -1)
+    return new Dataset(arr, this.option)
   }
   addDep(dep) {
     this.__deps.push(dep)
   }
 }
-function getArrData(data = [], key = '*', Cls) {
+function getArrData(data = [], key = '*', Cls, sortKey) {
   let resArr = []
   if (key === '*') {
     let list = new Cls('*')
     data.forEach(item => {
       list.push(item.__cell)
     })
-    resArr.push(list)
+    resArr.push(list.sort(keySort))
   } else {
     let keys = Object.create(null)
     data.forEach(item => {
@@ -42,10 +61,15 @@ function getArrData(data = [], key = '*', Cls) {
       keys[item[key]].push(item.__cell)
     })
     for (let key in keys) {
-      resArr.push(keys[key])
+      resArr.push(keys[key].sort(keySort))
     }
   }
   return resArr
+  function keySort(a, b) {
+    if (sortKey) {
+      return a.data[sortKey] > b.data[sortKey] ? 1 : -1
+    }
+  }
 }
 class BaseList extends Array {
   constructor(name) {
@@ -70,7 +94,6 @@ class BaseList extends Array {
     })
   }
 }
-class Col extends BaseList {}
 class Row extends BaseList {}
 
 export default Dataset
