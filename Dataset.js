@@ -81,8 +81,14 @@ function getArrData(data = [], Cls, option) {
 class BaseList extends Array {
   constructor(name, option) {
     super()
-    this.name = name
-    this.option = option
+    this.__name = name
+    this.__option = option
+  }
+  get name() {
+    return this.__name
+  }
+  get option() {
+    return this.__option
   }
   get state() {
     //遍历子项，查看状态是否统一
