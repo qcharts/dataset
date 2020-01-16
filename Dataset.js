@@ -1,32 +1,33 @@
 import Cell from './Cell'
 //import filterClone from 'filter-clone'
-import state from './state'
+import Row from './Row'
+let store = Object.create(null)
 class Dataset extends Array {
   constructor(data, option) {
     super()
     data.forEach((item, i) => {
-      item.__cell = new Cell(item)
+      item.__cell = new Cell(item, option)
       this[i] = item
     })
-    this.__option = option
-    this.__deps = []
-    this.__rows = []
-    this.__rows = getArrData(this, Row, option)
+    store.__option = option
+    store.__deps = []
+    store.__rows = []
+    store.__rows = getArrData(this, Row, option)
   }
   get option() {
-    return this.__option
+    return store.__option
   }
   get cols() {
     let cols = []
     let colLen = 0
-    this.__rows.forEach(row => {
+    store.__rows.forEach(row => {
       if (row.length > colLen) {
         colLen = row.length
       }
     })
     for (let i = 0; i < colLen; i++) {
       let arr = []
-      this.__rows.forEach(item => {
+      store.__rows.forEach(item => {
         arr.push(item[i])
       })
       cols.push(arr)
@@ -34,7 +35,7 @@ class Dataset extends Array {
     return cols
   }
   get rows() {
-    return this.__rows
+    return store.__rows
   }
   selectRows(name) {
     let rowKey = this.option.row
@@ -47,7 +48,7 @@ class Dataset extends Array {
     return new Dataset(arr, this.option)
   }
   addDep(dep) {
-    this.__deps.push(dep)
+    store.__deps.push(dep)
   }
 }
 function getArrData(data = [], Cls, option) {
@@ -78,36 +79,5 @@ function getArrData(data = [], Cls, option) {
     }
   }
 }
-class BaseList extends Array {
-  constructor(name, option) {
-    super()
-    this.__name = name
-    this.__option = option
-  }
-  get name() {
-    return this.__name
-  }
-  get option() {
-    return this.__option
-  }
-  get state() {
-    //遍历子项，查看状态是否统一
-    let sta = this[0].state
-    for (let i = 1; i < this.length; i++) {
-      if (this[i].state !== sta) {
-        sta = 'mixed'
-        break
-      }
-    }
-    return sta
-  }
-  set state(name) {
-    //给所有子项设置state
-    this.forEach(cell => {
-      cell.state = state[name]
-    })
-  }
-}
-class Row extends BaseList {}
 
 export default Dataset
