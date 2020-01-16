@@ -1,8 +1,13 @@
 import filterClone from 'filter-clone'
 import state from './state'
-class Cell {
+class Cell extends Object {
   constructor(data) {
-    this.data = filterClone(data, [], ['__cell'])
+    super()
+    for (let key in data) {
+      if (key.indexOf('__') !== 0) {
+        this[key] = data[key]
+      }
+    }
     this.__state = state.default
   }
   get state() {

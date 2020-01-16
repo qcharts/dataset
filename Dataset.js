@@ -1,19 +1,20 @@
 import Cell from './Cell'
 //import filterClone from 'filter-clone'
 import state from './state'
-class Dataset {
+class Dataset extends Array {
   constructor(data, option) {
-    this.data = data
-    this.option = option
+    super()
+    data.forEach((item, i) => {
+      item.__cell = new Cell(item)
+      this[i] = item
+    })
+    this.__option = option
     this.__deps = []
     this.__rows = []
-    this.data.forEach(item => {
-      if (!item.__cell) {
-        //select 场景使用
-        item.__cell = new Cell(item)
-      }
-    })
-    this.__rows = getArrData(this.data, option.row, Row, option.col)
+    this.__rows = getArrData(this, Row, option)
+  }
+  get option() {
+    return this.__option
   }
   get cols() {
     let cols = []
@@ -37,17 +38,23 @@ class Dataset {
   }
   selectRows(name) {
     let rowKey = this.option.row
-    let arr = this.data.filter(item => name.indexOf(item[rowKey]) !== -1)
+    let arr = []
+    this.forEach(item => {
+      if (name.indexOf(item[rowKey]) !== -1) {
+        arr.push(item)
+      }
+    })
     return new Dataset(arr, this.option)
   }
   addDep(dep) {
     this.__deps.push(dep)
   }
 }
-function getArrData(data = [], key = '*', Cls, sortKey) {
+function getArrData(data = [], Cls, option) {
+  let { row: key, col: sortKey } = option
   let resArr = []
   if (key === '*') {
-    let list = new Cls('*')
+    let list = new Cls('*', option)
     data.forEach(item => {
       list.push(item.__cell)
     })
@@ -56,7 +63,7 @@ function getArrData(data = [], key = '*', Cls, sortKey) {
     let keys = Object.create(null)
     data.forEach(item => {
       if (!keys[item[key]]) {
-        keys[item[key]] = new Cls(item[key])
+        keys[item[key]] = new Cls(item[key], option)
       }
       keys[item[key]].push(item.__cell)
     })
@@ -72,16 +79,17 @@ function getArrData(data = [], key = '*', Cls, sortKey) {
   }
 }
 class BaseList extends Array {
-  constructor(name) {
+  constructor(name, option) {
     super()
     this.name = name
+    this.option = option
   }
   get state() {
     //遍历子项，查看状态是否统一
     let sta = this[0].state
     for (let i = 1; i < this.length; i++) {
-      if (this[i].state !== state) {
-        sta = state.mixed
+      if (this[i].state !== sta) {
+        sta = 'mixed'
         break
       }
     }
