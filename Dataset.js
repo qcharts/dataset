@@ -75,7 +75,7 @@ function getArrData(data = [], Cls, option) {
   return resArr
   function keySort(a, b) {
     if (sortKey) {
-      return a.data[sortKey] > b.data[sortKey] ? 1 : -1
+      return a[sortKey] > b[sortKey] ? 1 : -1
     }
   }
 }
