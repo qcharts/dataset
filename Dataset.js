@@ -1,7 +1,5 @@
 import Cell from './Cell'
-//import filterClone from 'filter-clone'
 import Row from './Row'
-let store = Object.create(null)
 class Dataset extends Array {
   constructor(data, option) {
     super()
@@ -9,25 +7,27 @@ class Dataset extends Array {
       item.__cell = new Cell(item, option)
       this[i] = item
     })
+    this.__store = Object.create(null)
+    let store = this.__store
     store.__option = option
     store.__deps = []
     store.__rows = []
     store.__rows = getArrData(this, Row, option)
   }
   get option() {
-    return store.__option
+    return this.__store.__option
   }
   get cols() {
     let cols = []
     let colLen = 0
-    store.__rows.forEach(row => {
+    this.__store.__rows.forEach(row => {
       if (row.length > colLen) {
         colLen = row.length
       }
     })
     for (let i = 0; i < colLen; i++) {
       let arr = []
-      store.__rows.forEach(item => {
+      this.__store.__rows.forEach(item => {
         arr.push(item[i])
       })
       cols.push(arr)
@@ -35,7 +35,7 @@ class Dataset extends Array {
     return cols
   }
   get rows() {
-    return store.__rows
+    return this.__store.__rows
   }
   selectRows(name) {
     let rowKey = this.option.row
@@ -48,7 +48,7 @@ class Dataset extends Array {
     return new Dataset(arr, this.option)
   }
   addDep(dep) {
-    store.__deps.push(dep)
+    this.__store.__deps.push(dep)
   }
 }
 function getArrData(data = [], Cls, option) {

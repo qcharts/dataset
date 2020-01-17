@@ -1,15 +1,15 @@
-let store = Object.create(null)
 class Row extends Array {
   constructor(name, option) {
     super()
-    store.__name = name
-    store.__option = option
+    this.__store = Object.create(null)
+    this.__store.__name = name
+    this.__store.__option = option
   }
   get name() {
-    return store.__name
+    return this.__store.__name
   }
   get option() {
-    return store.__option
+    return this.__store.__option
   }
   get state() {
     //遍历子项，查看状态是否统一
