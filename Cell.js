@@ -4,12 +4,20 @@ class Cell extends Object {
     super()
     this.__store = Object.create(null)
     this.__store.__option = option
+    this.__store.row = null
+    this.__store.col = null
     for (let key in data) {
       if (key.indexOf('__') !== 0) {
         this[key] = data[key]
       }
     }
     this.__store.__state = state.default
+  }
+  get row() {
+    return this.__store.row
+  }
+  get col() {
+    return this.__store.col
   }
   get value() {
     return this[this.__store.__option['value']]

@@ -1,5 +1,5 @@
 import Cell from './Cell'
-import Row from './Row'
+import { Row, Col } from './Row'
 class Dataset extends Array {
   constructor(data, option) {
     super()
@@ -26,7 +26,7 @@ class Dataset extends Array {
       }
     })
     for (let i = 0; i < colLen; i++) {
-      let arr = []
+      let arr = new Col()
       this.__store.__rows.forEach(item => {
         arr.push(item[i])
       })
@@ -69,9 +69,16 @@ function getArrData(data = [], Cls, option) {
       keys[item[key]].push(item.__cell)
     })
     for (let key in keys) {
-      resArr.push(keys[key].sort(keySort))
+      let curRow = keys[key].sort(keySort)
+      resArr.push(curRow)
     }
   }
+  resArr.forEach((list, m) => {
+    list.forEach((cell, n) => {
+      cell.__store.row = m
+      cell.__store.col = n
+    })
+  })
   return resArr
   function keySort(a, b) {
     if (sortKey) {

@@ -1,4 +1,4 @@
-class Row extends Array {
+class List extends Array {
   constructor(name, option) {
     super()
     this.__store = Object.create(null)
@@ -29,4 +29,6 @@ class Row extends Array {
     })
   }
 }
-export default Row
+class Row extends List {}
+class Col extends List {}
+export { Row, Col }
