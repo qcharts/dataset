@@ -1,4 +1,5 @@
 import state from './state'
+import { mixinEvent } from './event'
 class Cell extends Object {
   constructor(data, option) {
     super()
@@ -12,6 +13,7 @@ class Cell extends Object {
       }
     }
     this.__store.__state = state.default
+    mixinEvent(this)
   }
   get row() {
     return this.__store.row
@@ -33,6 +35,7 @@ class Cell extends Object {
   }
   set state(name) {
     this.__store.__state = state[name]
+    this.dispatchEvent('change', { type: 'cell', data: this })
   }
 }
 export default Cell

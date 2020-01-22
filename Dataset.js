@@ -1,5 +1,6 @@
 import Cell from './Cell'
 import { Row, Col } from './Row'
+import { mixinEvent } from './event'
 class Dataset extends Array {
   constructor(data, option) {
     super()
@@ -13,6 +14,7 @@ class Dataset extends Array {
     store.__deps = []
     store.__rows = []
     store.__rows = getArrData(this, Row, option)
+    mixinEvent(this)
   }
   get option() {
     return this.__store.__option

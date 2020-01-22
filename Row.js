@@ -1,9 +1,11 @@
+import { mixinEvent } from './event'
 class List extends Array {
   constructor(name, option) {
     super()
     this.__store = Object.create(null)
     this.__store.__name = name
     this.__store.__option = option
+    mixinEvent(this)
   }
   get name() {
     return this.__store.__name
@@ -27,6 +29,11 @@ class List extends Array {
     this.forEach(cell => {
       cell.state = state[name]
     })
+    if (this instanceof Row) {
+      this.dispatchEvent('change', { type: 'row', data: this })
+    } else if (this instanceof Col) {
+      this.dispatchEvent('change', { type: 'col', data: this })
+    }
   }
 }
 class Row extends List {}
