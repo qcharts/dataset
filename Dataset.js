@@ -5,7 +5,7 @@ class Dataset extends Array {
   constructor(data, option) {
     super()
     data.forEach((item, i) => {
-      item.__cell = new Cell(item, option)
+      item.__cell = new Cell(item, option, this)
       this[i] = item
     })
     this.__store = Object.create(null)
