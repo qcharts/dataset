@@ -5,15 +5,18 @@ class Dataset extends Array {
   constructor(data, option) {
     super()
     data.forEach((item, i) => {
-      item.__cell = new Cell(item, option, this)
-      this[i] = item
+      let cell = item
+      if (!(item instanceof Cell)) {
+        cell = new Cell(item, option, this)
+      }
+      this[i] = cell
     })
     this.__store = Object.create(null)
     let store = this.__store
     store.__option = option
     store.__deps = []
     store.__rows = []
-    store.__rows = getArrData(this, Row, option)
+    store.__rows = getArrData(this, option)
     mixinEvent(this)
   }
   get option() {
@@ -43,7 +46,7 @@ class Dataset extends Array {
     let rowKey = this.option.row
     let arr = []
     this.forEach(item => {
-      if (name.indexOf(item[rowKey]) !== -1) {
+      if (name.indexOf(item.data[rowKey]) !== -1) {
         arr.push(item)
       }
     })
@@ -53,38 +56,41 @@ class Dataset extends Array {
     this.__store.__deps.push(dep)
   }
 }
-function getArrData(data = [], Cls, option) {
+function getArrData(data = [], option) {
+  console.log('abc')
   let { row: key, col: sortKey } = option
   let resArr = []
   if (key === '*') {
-    let list = new Cls('*', option)
+    let list = new Row('*', option)
     data.forEach(item => {
-      list.push(item.__cell)
+      list.push(item)
     })
     resArr.push(list.sort(keySort))
   } else {
     let keys = Object.create(null)
     data.forEach(item => {
-      if (!keys[item[key]]) {
-        keys[item[key]] = new Cls(item[key], option)
+      let data = item.__store.data
+      if (!keys[data[key]]) {
+        keys[data[key]] = new Row(data[key], option)
       }
-      keys[item[key]].push(item.__cell)
+      keys[data[key]].push(item)
     })
     for (let key in keys) {
       let curRow = keys[key].sort(keySort)
       resArr.push(curRow)
     }
   }
+  console.log(resArr)
   resArr.forEach((list, m) => {
     list.forEach((cell, n) => {
-      cell.__store.row = m
-      cell.__store.col = n
+      cell.row = m
+      cell.col = n
     })
   })
   return resArr
   function keySort(a, b) {
     if (sortKey) {
-      return a[sortKey] > b[sortKey] ? 1 : -1
+      return a.data[sortKey] > b.data[sortKey] ? 1 : -1
     }
   }
 }
