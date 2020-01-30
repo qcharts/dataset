@@ -1,11 +1,19 @@
 import { mixinEvent } from './event'
+import state from './state'
 class List extends Array {
   constructor(name, option) {
     super()
     this.__store = Object.create(null)
     this.__store.__name = name
     this.__store.__option = option
+    this.__store.dataset = null
     mixinEvent(this)
+  }
+  set dataset(arr) {
+    this.__store.dataset = arr
+  }
+  get dataset() {
+    return this.__store.dataset
   }
   get name() {
     return this.__store.__name
@@ -29,11 +37,14 @@ class List extends Array {
     this.forEach(cell => {
       cell.state = state[name]
     })
+    let dispatchOption = null
     if (this instanceof Row) {
-      this.dispatchEvent('change', { type: 'row', data: this })
+      dispatchOption = { type: 'row', data: this }
     } else if (this instanceof Col) {
-      this.dispatchEvent('change', { type: 'col', data: this })
+      dispatchOption = { type: 'col', data: this }
     }
+    this.dispatchEvent('change', dispatchOption)
+    this.dataset && this.dataset.dispatchEvent('change', dispatchOption)
   }
 }
 class Row extends List {}

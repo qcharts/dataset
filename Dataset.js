@@ -8,6 +8,8 @@ class Dataset extends Array {
       let cell = item
       if (!(item instanceof Cell)) {
         cell = new Cell(item, option, this)
+      } else {
+        cell.datasets.push(this)
       }
       this[i] = cell
     })
@@ -32,6 +34,7 @@ class Dataset extends Array {
     })
     for (let i = 0; i < colLen; i++) {
       let arr = new Col()
+      arr.dataset = this
       this.__store.__rows.forEach(item => {
         arr.push(item[i])
       })
@@ -41,6 +44,16 @@ class Dataset extends Array {
   }
   get rows() {
     return this.__store.__rows
+  }
+  resetState(state = 'default') {
+    let res = []
+    this.forEach(cell => {
+      if (cell.state !== state) {
+        res.push(cell)
+        cell.state = state
+      }
+    })
+    this.dispatchEvent('change', { type: 'reset', data: res })
   }
   selectRows(name) {
     let rowKey = this.option.row
@@ -57,7 +70,6 @@ class Dataset extends Array {
   }
 }
 function getArrData(data = [], option) {
-  console.log('abc')
   let { row: key, col: sortKey } = option
   let resArr = []
   if (key === '*') {
@@ -80,8 +92,8 @@ function getArrData(data = [], option) {
       resArr.push(curRow)
     }
   }
-  console.log(resArr)
   resArr.forEach((list, m) => {
+    list.dataset = data
     list.forEach((cell, n) => {
       cell.row = m
       cell.col = n

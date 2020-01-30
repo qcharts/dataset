@@ -1,7 +1,7 @@
 import state from './state'
 import { mixinEvent } from './event'
 class Cell extends Object {
-  constructor(data, option) {
+  constructor(data, option, dataset) {
     super()
     this.__store = Object.create(null)
     this.__store.state = state['default']
@@ -9,7 +9,11 @@ class Cell extends Object {
     this.__store.col = undefined
     this.__store.option = option
     this.__store.data = data
+    this.__store.datasets = [dataset]
     mixinEvent(this)
+  }
+  get datasets() {
+    return this.__store.datasets
   }
   get data() {
     return this, this.__store.data
@@ -43,6 +47,12 @@ class Cell extends Object {
     return this.__store.state
   }
   set state(name) {
+    if (this.__store.state !== state[name]) {
+      this.dispatchEvent('change', { type: 'cell', data: this })
+      this.datasets.forEach(dataset => {
+        dataset.dispatchEvent('change', { type: 'cell', data: this })
+      })
+    }
     this.__store.state = state[name]
   }
 }
