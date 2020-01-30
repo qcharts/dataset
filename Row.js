@@ -39,9 +39,9 @@ class List extends Array {
     })
     let dispatchOption = null
     if (this instanceof Row) {
-      dispatchOption = { type: 'row', data: this }
+      dispatchOption = { name: 'row', data: this }
     } else if (this instanceof Col) {
-      dispatchOption = { type: 'col', data: this }
+      dispatchOption = { name: 'col', data: this }
     }
     this.dispatchEvent('change', dispatchOption)
     this.dataset && this.dataset.dispatchEvent('change', dispatchOption)

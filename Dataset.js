@@ -53,7 +53,7 @@ class Dataset extends Array {
         cell.state = state
       }
     })
-    this.dispatchEvent('change', { type: 'reset', data: res })
+    this.dispatchEvent('change', { name: 'reset', data: res })
   }
   selectRows(name) {
     let rowKey = this.option.row
