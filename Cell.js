@@ -47,10 +47,10 @@ class Cell extends Object {
     return this.__store.state
   }
   set state(name) {
-    if (this.__store.state !== state[name]) {
-      this.dispatchEvent('change', { name: 'cell', data: this })
+    if (state[name] && this.__store.state !== state[name]) {
+      this.dispatchEvent('change', { name: 'cell', value: state[name], data: this })
       this.datasets.forEach(dataset => {
-        dataset.dispatchEvent('change', { name: 'cell', data: this })
+        dataset.dispatchEvent('change', { name: 'cell', value: state[name], data: this })
       })
     }
     this.__store.state = state[name]

@@ -33,18 +33,20 @@ class List extends Array {
     return sta
   }
   set state(name) {
-    //给所有子项设置state
-    this.forEach(cell => {
-      cell.state = state[name]
-    })
-    let dispatchOption = null
-    if (this instanceof Row) {
-      dispatchOption = { name: 'row', data: this }
-    } else if (this instanceof Col) {
-      dispatchOption = { name: 'col', data: this }
+    if (state[name] && this.state !== state[name]) {
+      //给所有子项设置state
+      this.forEach(cell => {
+        cell.state = state[name]
+      })
+      let dispatchOption = null
+      if (this instanceof Row) {
+        dispatchOption = { name: 'row', value: state[name], data: this }
+      } else if (this instanceof Col) {
+        dispatchOption = { name: 'col', value: state[name], data: this }
+      }
+      this.dispatchEvent('change', dispatchOption)
+      this.dataset && this.dataset.dispatchEvent('change', dispatchOption)
     }
-    this.dispatchEvent('change', dispatchOption)
-    this.dataset && this.dataset.dispatchEvent('change', dispatchOption)
   }
 }
 class Row extends List {}
