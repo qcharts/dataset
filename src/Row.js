@@ -9,6 +9,13 @@ class List extends Array {
     this.__store.dataset = null
     mixinEvent(this)
   }
+  get data() {
+    let arr = []
+    this.forEach(cell => {
+      arr.push(cell.data)
+    })
+    return arr
+  }
   set dataset(arr) {
     this.__store.dataset = arr
   }
