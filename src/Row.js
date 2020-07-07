@@ -43,6 +43,10 @@ class List extends Array {
     if (state[name] && this.state !== state[name]) {
       //给所有子项设置state
       this.forEach(cell => {
+        //如果disabled的状态，必须先设置位default,disabled的state不能直接修改位其它状态
+        if (cell.state === 'disabled' && name !== 'default') {
+          return
+        }
         cell.state = state[name]
       })
       let dispatchOption = null

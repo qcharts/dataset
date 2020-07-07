@@ -48,7 +48,8 @@ class Dataset extends Array {
   resetState(state = 'default') {
     let res = []
     this.forEach(cell => {
-      if (cell.state !== state) {
+      //reset的时候不处理disabled
+      if (cell.state !== state && cell.state !== 'disabled') {
         res.push(cell)
         cell.state = state
       }
