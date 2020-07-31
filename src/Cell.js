@@ -20,6 +20,9 @@ class Cell extends Object {
     return this, this.__store.data;
   }
   get value() {
+    return this.__store.data[this.__store.option["value"]];
+  }
+  get layoutScaleValue() {
     return typeof this._layoutScaleFunc === "function"
       ? this._layoutScaleFunc(this.__store.data[this.__store.option["value"]])
       : this.__store.data[this.__store.option["value"]];
