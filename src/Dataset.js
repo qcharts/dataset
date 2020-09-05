@@ -5,14 +5,14 @@ class Dataset extends Array {
   constructor(data, option) {
     super()
     this.layoutScaleFunc = this.handleLayoutScale(option.layoutScale)
-    data.forEach((item, i) => {
+    data.forEach(item => {
       let cell = item
       if (!(item instanceof Cell)) {
         cell = new Cell(item, option, this)
       } else {
         cell.datasets.push(this)
       }
-      this[i] = cell
+      this.push(cell)
     })
     this.__store = Object.create(null)
     let store = this.__store
