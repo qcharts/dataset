@@ -67,7 +67,7 @@ class Cell extends Object {
   }
   layoutScaleValue(key) {
     let curVal = this.__store.data[this.__store.option['value']]
-    if (key !== 'value') {
+    if (key && key !== 'value') {
       curVal = this.__store.data[key]
     }
     return typeof this._layoutScaleFunc === 'function' ? this._layoutScaleFunc(curVal) : curVal
