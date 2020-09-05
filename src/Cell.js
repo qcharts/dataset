@@ -65,8 +65,12 @@ class Cell extends Object {
       })
     }
   }
-  layoutScaleValue(key = 'value') {
-    return typeof this._layoutScaleFunc === 'function' ? this._layoutScaleFunc(this.__store.data[this.__store.option[key]]) : this.__store.data[this.__store.option[key]]
+  layoutScaleValue(key) {
+    let curVal = this.__store.data[this.__store.option['value']]
+    if (key !== 'value') {
+      curVal = this.__store.data[key]
+    }
+    return typeof this._layoutScaleFunc === 'function' ? this._layoutScaleFunc(curVal) : curVal
   }
 }
 export default Cell
